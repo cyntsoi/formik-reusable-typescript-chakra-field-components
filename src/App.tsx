@@ -1,8 +1,10 @@
-import {Button, Container, Heading} from "@chakra-ui/react"
+import {Button, Heading} from "@chakra-ui/react"
 import {FormikTextField, FormikRatingField, FormikTextareaField} from "./components/form"
-import {Form , Field, Formik, FormikConfig} from "formik"
+import {Form, Field, Formik, FormikConfig} from "formik"
 import fetchCustomerAddress from "./api/getAddress"
 import React, {KeyboardEventHandler} from "react"
+import {PageContainer} from "./components/PageContainer";
+import {isGoodRating} from "./api/isGoodRating";
 
 interface FormValues {
     customerId: string,
@@ -12,13 +14,13 @@ interface FormValues {
     customerComment: string
 }
 
-interface FormStatus{
+interface FormStatus {
     customerIdLoading: boolean,
     customerIdVerified: boolean,
     addressConfirmedByUser: boolean
 }
 
-const initialValues : FormValues = {
+const initialValues: FormValues = {
     customerId: "",
     addressId: "",
     addressText: "",
@@ -26,15 +28,15 @@ const initialValues : FormValues = {
     customerComment: ""
 }
 
-const initialStatus : FormStatus = {
+const initialStatus: FormStatus = {
     customerIdLoading: false,
     customerIdVerified: false,
     addressConfirmedByUser: false
 }
 
-const isGoodRating = (rating = 0) => rating > 3
 
-const onSubmit : FormikConfig<FormValues>['onSubmit'] = (values , {setSubmitting} ) => {
+
+const onSubmit: FormikConfig<FormValues>['onSubmit'] = (values, {setSubmitting}) => {
     setSubmitting(true)
     setTimeout(() => {
         setSubmitting(false)
@@ -45,8 +47,7 @@ const onSubmit : FormikConfig<FormValues>['onSubmit'] = (values , {setSubmitting
 
 function App() {
     return (
-        <Container minH="100vh" py="10vh" display="flex" flexDirection="column"
-                   justifyContent="center">
+        <PageContainer>
             <Heading as="h1" size="lg" mb={4}>How did we do? </Heading>
             <Formik initialValues={initialValues} initialStatus={initialStatus} onSubmit={onSubmit}>
                 {({
@@ -59,13 +60,12 @@ function App() {
                           customerIdLoading
                       },
                       dirty,
-                      handleSubmit,
                       setFieldValue,
                       setFieldError,
                       setStatus,
                       isSubmitting
                   }) => {
-                    const confirmCustomerId = () => {
+                    const confirmCustomerId = async () => {
                         const customerId = values.customerId
                         if (customerId === "") {
                             setFieldError("customerId", "Customer ID cannot be empty.")
@@ -76,27 +76,26 @@ function App() {
                             customerIdVerified: false,
                             customerIdLoading: true
                         })
-                        fetchCustomerAddress(customerId)
-                            .then(({id, address}) => {
-                                setFieldValue("addressId", id)
-                                setFieldValue("addressText", address)
-                                setStatus({
-                                    ...status,
-                                    customerIdVerified: true,
-                                    customerIdLoading: false
-                                })
+                        try {
+                            const {id, address} = await fetchCustomerAddress(customerId)
+                            setFieldValue("addressId", id)
+                            setFieldValue("addressText", address)
+                            setStatus({
+                                ...status,
+                                customerIdVerified: true,
+                                customerIdLoading: false
                             })
-                            .catch((err) => {
-                                setStatus({
-                                    ...status,
-                                    customerIdVerified: false,
-                                    customerIdLoading: false
-                                })
-                                setFieldError("customerId", err.message)
+                        } catch (err) {
+                            setStatus({
+                                ...status,
+                                customerIdVerified: false,
+                                customerIdLoading: false
                             })
+                            setFieldError("customerId", err.message)
+                        }
                     }
                     const confirmAddress = () => setStatus({...status, addressConfirmedByUser: true})
-                    const onFormKeyDown :KeyboardEventHandler<HTMLFormElement> = (event) => {
+                    const onFormKeyDown: KeyboardEventHandler<HTMLFormElement> = (event) => {
                         if ((event.charCode || event.keyCode) === 13 && (!dirty || !customerIdVerified || !addressConfirmedByUser || customerIdLoading)) {
                             event.preventDefault()
                             if (!customerIdVerified) {
@@ -170,7 +169,7 @@ function App() {
                                                     component={FormikTextareaField}
                                                 />
                                                 <Button mt={5} type="submit" isLoading={isSubmitting}
-                                                        disabled={ !values.customerComment || isSubmitting}>
+                                                        disabled={!values.customerComment || isSubmitting}>
                                                     Submit Comment
                                                 </Button>
                                             </>
@@ -183,7 +182,7 @@ function App() {
                 }
                 }
             </Formik>
-        </Container> )
+        </PageContainer>)
 }
 
 export default App;
