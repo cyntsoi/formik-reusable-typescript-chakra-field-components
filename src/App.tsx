@@ -1,4 +1,4 @@
-import {Button, Container, chakra, Heading} from "@chakra-ui/react"
+import {Button, Container, Heading} from "@chakra-ui/react"
 import {FormikTextField, FormikRatingField, FormikTextareaField} from "./components/form"
 import {Form , Field, Formik, FormikConfig} from "formik"
 import fetchCustomerAddress from "./api/getAddress"
