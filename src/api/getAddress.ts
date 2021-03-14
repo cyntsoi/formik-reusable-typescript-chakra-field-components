@@ -28,7 +28,7 @@ const addresses: Array<Address> = [
     }
 ]
 
-export const fetchAddress = (addressId: string) => {
+export const fetchAddress = (addressId: string): Promise<Address> => {
     return new Promise((res, rej) => {
         if (!addressId) {
             rej(formatErrorMessage("Customer does not have an address."))
@@ -57,7 +57,7 @@ export const fetchCustomer = (customerId: string): Promise<Customer> => {
     })
 }
 
-export const fetchCustomerAddress = (customerId: string) => {
+export const fetchCustomerAddress = (customerId: string): Promise<Address> => {
     return fetchCustomer(customerId).then(({addressId}) => fetchAddress(addressId))
 }
 
