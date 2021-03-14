@@ -28,19 +28,19 @@ const createFormikFieldWrapperHOC = ({
                                          labelWrapperProps: baseLabelWrapperProps = {},
                                          errorMessageProps: baseErrorMessageProps = {}
                                      }: FieldWrapperComponentProps) => {
-    return <V, T extends FieldProps<V> = FieldProps<V>>(Component: React.ComponentType<Omit<Omit<T, keyof FieldWrapperProps >, keyof FieldWrapperComponentProps>>) => {
-        const WrappedComponent = ({
-                                      field,
-                                      formControlProps = {},
-                                      inputWrapperProps = {},
-                                      labelWrapperProps = {},
-                                      errorMessageProps = {},
-                                      form, meta,
-                                      labelText,
-                                      beforeInput,
-                                      afterInput,
-                                      ...componentProps
-                                  }: FieldWrapperComponentProps & FieldWrapperProps & T) => {
+    return <V, T extends FieldProps<V> = FieldProps<V>>(Component: React.ComponentType<Omit<Omit<T, keyof FieldWrapperProps>, keyof FieldWrapperComponentProps>>) => {
+        return ({
+                    field,
+                    formControlProps = {},
+                    inputWrapperProps = {},
+                    labelWrapperProps = {},
+                    errorMessageProps = {},
+                    form, meta,
+                    labelText,
+                    beforeInput,
+                    afterInput,
+                    ...componentProps
+                }: FieldWrapperComponentProps & FieldWrapperProps & T) => {
             const error = form.errors[field.name]
             return (
                 <FormControl
@@ -56,7 +56,7 @@ const createFormikFieldWrapperHOC = ({
                             form,
                             field,
                             meta
-                        } as Omit<Omit<T, keyof FieldWrapperProps >, keyof FieldWrapperComponentProps>)} />
+                        } as Omit<Omit<T, keyof FieldWrapperProps>, keyof FieldWrapperComponentProps>)} />
                         {afterInput}
                     </HStack>
                     {error &&
@@ -64,7 +64,6 @@ const createFormikFieldWrapperHOC = ({
                 </FormControl>
             )
         }
-        return WrappedComponent
     }
 }
 

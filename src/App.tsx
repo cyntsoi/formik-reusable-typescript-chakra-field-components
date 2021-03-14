@@ -160,7 +160,7 @@ function App() {
                                         {customerRating > 0 && (
                                             <>
                                                 <Field
-                                                    formControlProps={{id: "customef_comment"}}
+                                                    formControlProps={{id: "customer_comment"}}
                                                     labelText={
                                                         isGoodRating(customerRating)
                                                             ? "Please provide additional comments for us to improve upon."

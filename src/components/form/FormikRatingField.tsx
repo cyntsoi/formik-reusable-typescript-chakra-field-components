@@ -2,11 +2,11 @@ import {StarIcon} from "@chakra-ui/icons"
 import {IconButton, Input} from "@chakra-ui/react"
 import {withFormikFieldWrapper} from "./withFormikFieldWrapper"
 import React, {useState} from "react"
-import { FieldProps } from "formik"
+import {FieldProps} from "formik"
 
 type V = number
 
-export const FormikRatingFieldInner : React.FC<FieldProps<V>>  = ({field, form}) => {
+export const FormikRatingFieldInner: React.FC<FieldProps<V>> = ({field, form: {setFieldValue}}) => {
     const [selected, setSelected] = useState(0)
     return (
         <div>
@@ -25,11 +25,9 @@ export const FormikRatingFieldInner : React.FC<FieldProps<V>>  = ({field, form})
                         icon={<StarIcon/>}
                         onMouseEnter={() => select()}
                         onMouseLeave={() => unselect()}
-                        onFocus={()=>select()}
-                        onBlur={()=>unselect()}
-                        onClick={() => {
-                            form.setFieldValue(field.name, idx + 1)
-                        }}
+                        onFocus={() => select()}
+                        onBlur={() => unselect()}
+                        onClick={() => setFieldValue(field.name, idx + 1)}
                     />
                 )
             })}
